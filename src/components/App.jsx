@@ -18,18 +18,16 @@ export class App extends Component {
     filter: '',
   };
 
-  // fromSubmit = data => {
-  //   this.state.contacts.every(contact => {
-  //     if (contact.name !== data.name) {
-  //       return this.setState(prevState => ({
-  //         contacts: [data, ...prevState.contacts],
-  //       }));
-  //     } else {
-  //       return alert(`${data.name} is alredy in contacts`);
-  //     }
-  //   });
-  // };
   fromSubmit = data => {
+    const searchSameName = this.state.contacts
+      .map(cont => cont.name)
+      .includes(data.name);
+
+    if (searchSameName) {
+      alert(`${data.name} is already in contacts`);
+      return;
+    }
+
     this.setState(prevState => ({
       contacts: [data, ...prevState.contacts],
     }));
@@ -52,6 +50,10 @@ export class App extends Component {
     );
   };
 
+  findSameContact = (contacts, formContact) => {
+    return contacts.map(contact => contact.include(formContact));
+  };
+
   render() {
     const { fromSubmit, changeFilter, filterContacts, deleteContact } = this;
     const { filter, contacts } = this.state;
@@ -66,8 +68,7 @@ export class App extends Component {
         <div className={css.contactsWrap}>
           <Filter filter={filter} onChangeFilter={changeFilter} />
           <ContactList
-            filterContacts={filterContacts}
-            contacts={contacts}
+            filterContacts={filterContacts(contacts)}
             onDelete={deleteContact}
           />
         </div>
